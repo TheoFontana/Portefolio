@@ -1,0 +1,11 @@
+# General
+.DS_Store
+node_modules/
+/dist
+/public
+
+# Log files
+*.log*
+
+#Editor Setting
+.vscode
