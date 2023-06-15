@@ -26,6 +26,7 @@ body
     max-width: 1440px;
     margin: auto;
     padding: 1rem 5rem;
+    z-index: 1;
 }
 h1{
     font-size: 3rem;
@@ -39,6 +40,9 @@ h2{
 a{
     color: #fff;
     text-decoration: none;
+}
+a:hover{
+    cursor: pointer;
 }
 .header{
     display: flex;
@@ -60,8 +64,10 @@ a{
 }
 .hero{
     margin-top: 3rem;
+    width: 47vw;
 }
 .hero p{
+    margin-top: .5rem;
     font-size: 1.2rem;
     font-weight: 300;
 }
