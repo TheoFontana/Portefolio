@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-import * as dat from 'lil-gui'
+import * as  dat from 'lil-gui'
 
 /**
  * Base
@@ -23,12 +23,12 @@ scene.background = new THREE.Color( 0x050229 );
 // Ambient light
 const ambientLight = new THREE.AmbientLight()
 ambientLight.color = new THREE.Color(0xffffff)
-ambientLight.intensity = 0.4
+ambientLight.intensity = 0.6
 scene.add(ambientLight)
 
 // Spot light
-const mainSpotLight = new THREE.SpotLight(0xffffff, 0.8, 7, Math.PI * 0.1, 0.25, 1)
-mainSpotLight.position.set(-2, 2, 0)
+const mainSpotLight = new THREE.SpotLight(0xffffff, 0.8, 7, Math.PI * 1.1, 0.25, 1)
+mainSpotLight.position.set(-2, 2, 2)
 scene.add(mainSpotLight)
 
 mainSpotLight.target.position.x = 0.8
@@ -44,20 +44,19 @@ scene.add(SpotLight2)
 // const spotLightHelper2 = new THREE.SpotLightHelper(SpotLight2)
 // scene.add(spotLightHelper2)
 
-const key_word = '5G/6G'
-const main_key_words = ['DevOps ', '5G ','Cloud ', 'Autonomus Computing  ','QoS ']
-const letters =[]
-const main_key_words_meshes = []
+const main_key_words = ['5G/6G ', 'Autonomus Computing  ', 'QoS ', 'Sclicing']
+const secondary_key_words = ['DevOps ','Cloud ', 'FrontEnd ']
 
-const text_material = new THREE.MeshStandardMaterial( {
+const text_material = new THREE.MeshStandardMaterial({
     color: 0xffffff
-} );
-const loader = new FontLoader();
-    loader.load( 'fonts/Ubuntu Mono_Regular.json', function ( font ) {
-        main_key_words.forEach((word) => {
-            let word_mesh = []
+});
+function create3DLetters(text_material, words) {
+    const letters = []
+    const loader = new FontLoader();
+    loader.load('fonts/Ubuntu Mono_Regular.json', function (font) {
+        words.forEach((word) => {
             for (let letter of word) {
-                const letter_geometry = new TextGeometry( letter, {
+                const letter_geometry = new TextGeometry(letter, {
                     font: font,
                     size: 0.1,
                     height: 0.005,
@@ -67,15 +66,19 @@ const loader = new FontLoader();
                     bevelSize: 0.01,
                     bevelOffset: 0,
                     bevelSegments: 5,
-                } );
-                const letter_mesh = new THREE.Mesh( letter_geometry, text_material );
-                scene.add( letter_mesh );
-                word_mesh.push(letter_mesh)
+                });
+                const letter_mesh = new THREE.Mesh(letter_geometry, text_material);
+                scene.add(letter_mesh);
                 letters.push(letter_mesh)
             }
-            main_key_words_meshes.push(word_mesh)
         })
-    } );
+    });
+    return letters;
+}
+
+const main_letters = create3DLetters( text_material, main_key_words);
+const secondary_letters = create3DLetters( text_material, secondary_key_words);
+console.log(secondary_letters)
 /**
  * Objects
  */
@@ -92,15 +95,15 @@ const big_sphere = new THREE.Mesh(
     material
 )
 
-// const small_sphere = new THREE.Mesh(
-//     new THREE.SphereGeometry(0.2, 32, 32),
-//     material
-// )
-// small_sphere.position.x = 1.3
-// small_sphere.position.z = .5
+const small_sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.25, 32, 32),
+    material
+)
+small_sphere.position.x = 1.3
+small_sphere.position.z = .5
 
-// scene.add(big_sphere,small_sphere)
-scene.add(big_sphere)
+scene.add(big_sphere,small_sphere)
+// scene.add(big_sphere)
 
 /**
  * Sizes
@@ -132,7 +135,7 @@ window.addEventListener('resize', () =>
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 1
 camera.position.y = 1
-camera.position.z = 2
+camera.position.z = 3
 scene.add(camera)
 
 // Controls
@@ -161,27 +164,22 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
-    big_sphere.rotation.y = 0.1 * elapsedTime
     big_sphere.position.x = .8 + Math.cos(0.5 * elapsedTime)/10*Math.PI
     big_sphere.position.z = Math.sin(0.5 * elapsedTime)/7*Math.PI
 
-    // small_sphere.rotation.y = 0.1 * elapsedTime
-    // small_sphere.position.x = 1.3 + Math.cos(1 * elapsedTime)/15*Math.PI
-    // small_sphere.position.z = .5 +Math.sin(1 * elapsedTime)/10*Math.PI
-    // if (main_key_words_meshes.length){
-    //     main_key_words_meshes.forEach(word => {
-    //         word.forEach((letter, index) => {
-    //             letter.position.x =  big_sphere.position.x + 0.52 * Math.cos( 1 * elapsedTime - spacing * index)
-    //             letter.position.z =  big_sphere.position.z + 0.52 * Math.sin(1 * elapsedTime - spacing * index)
-    //             letter.rotation.y =  Math.PI/2 - elapsedTime + spacing * index
-    //         })
-    //     })
-    // }
-    if (letters.length) {
-        letters.forEach((letter, index) => {
-            letter.position.x =  big_sphere.position.x + 0.52 * Math.cos( 1 * elapsedTime - spacing * index)
-            letter.position.z =  big_sphere.position.z + 0.52 * Math.sin(1 * elapsedTime - spacing * index)
-            letter.rotation.y =  Math.PI/2 - elapsedTime + spacing * index
+    small_sphere.position.x = big_sphere.position.x + 1.2 * Math.cos(0.8 * elapsedTime)
+    small_sphere.position.z = big_sphere.position.z - 1.5 * Math.sin(0.8 * elapsedTime)
+
+    if (main_letters.length && secondary_letters.length) {
+        main_letters.forEach((letter, index) => {
+            letter.position.x =  big_sphere.position.x + 0.54 * Math.cos(0.8 * elapsedTime - spacing * index)
+            letter.position.z =  big_sphere.position.z + 0.54 * Math.sin(0.8 * elapsedTime - spacing * index)
+            letter.rotation.y =  Math.PI/2 - 0.8 * elapsedTime + spacing * index
+        })
+        secondary_letters.forEach((letter, index) =>{
+            letter.position.x =  small_sphere.position.x + 0.3 * Math.cos(1 * elapsedTime - 1.8 * spacing * index)
+            letter.position.z =  small_sphere.position.z + 0.3 * Math.sin(1 * elapsedTime - 1.8 * spacing * index)
+            letter.rotation.y =  Math.PI/2 - 1 * elapsedTime + 1.8 * spacing * index
         })
     }
 
