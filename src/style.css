@@ -44,10 +44,6 @@ a{
 a:hover{
     cursor: pointer;
 }
-.header{
-    display: flex;
-    justify-content: space-between;
-}
 .with-bg{
     padding: .5rem 1rem;
     background-color: #2917F3;
@@ -56,9 +52,15 @@ a:hover{
     width: fit-content;
     height: fit-content;
 }
+.header{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
 .menu{
     gap: 1.5rem;
 }
+
 .menu a:hover{
     cursor: pointer;
 }
@@ -87,4 +89,28 @@ a:hover{
     bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
+}
+
+
+@media only screen and (max-width: 1025px)  {
+    .hero{
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 425px)  {
+    .main{
+        padding: 1rem 1rem;
+    }
+    .hero{
+        margin-top: 1.5rem;
+    }
+    .hero p{
+        font-size: 1rem;
+    }
+    h1{
+        margin-top: 1rem;
+    }
+    .cta{
+        margin-top: 1rem;
+    }
 }

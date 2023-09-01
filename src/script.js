@@ -44,13 +44,13 @@ scene.add(SpotLight2)
 // const spotLightHelper2 = new THREE.SpotLightHelper(SpotLight2)
 // scene.add(spotLightHelper2)
 
-const main_key_words = ['5G/6G ', 'Autonomus Computing  ', 'QoS ', 'Sclicing']
-const secondary_key_words = ['DevOps ','Cloud ', 'FrontEnd ']
+const main_key_words = ['5G/6G ', 'Sclicing ', 'Autonomus Computing  ', 'QoS ']
+const secondary_key_words = ['DevOps ','Cloud ', 'Frontend ']
 
 const text_material = new THREE.MeshStandardMaterial({
     color: 0xffffff
 });
-function create3DLetters(text_material, words) {
+const create3DLetters = (text_material, words) => {
     const letters = []
     const loader = new FontLoader();
     loader.load('fonts/Ubuntu Mono_Regular.json', function (font) {
@@ -68,6 +68,7 @@ function create3DLetters(text_material, words) {
                     bevelSegments: 5,
                 });
                 const letter_mesh = new THREE.Mesh(letter_geometry, text_material);
+                letter_mesh.position.y = - .5
                 scene.add(letter_mesh);
                 letters.push(letter_mesh)
             }
@@ -78,7 +79,6 @@ function create3DLetters(text_material, words) {
 
 const main_letters = create3DLetters( text_material, main_key_words);
 const secondary_letters = create3DLetters( text_material, secondary_key_words);
-console.log(secondary_letters)
 /**
  * Objects
  */
@@ -94,16 +94,12 @@ const big_sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 32, 32),
     material
 )
-
+let big_sphere_center = .8
 const small_sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.25, 32, 32),
     material
 )
-small_sphere.position.x = 1.3
-small_sphere.position.z = .5
-
 scene.add(big_sphere,small_sphere)
-// scene.add(big_sphere)
 
 /**
  * Sizes
@@ -126,6 +122,19 @@ window.addEventListener('resize', () =>
     // Update renderer
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+    if (window.innerWidth < 425) {
+        camera.position.y = 0.5
+        big_sphere.position.y = -.5
+        small_sphere.position.y = -.5
+        big_sphere_center = 0
+    }
+    else {
+        camera.position.y = 1
+        big_sphere.position.y = 0
+        small_sphere.position.y = 0
+        big_sphere_center = .8
+    }
 })
 
 /**
@@ -154,6 +163,14 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
+
+if (window.innerWidth < 425) {
+    camera.position.y = 0.5
+    big_sphere.position.y = -.5
+    small_sphere.position.y = -.5
+    big_sphere_center = 0
+}
+
 /**
  * Animate
  */
@@ -164,7 +181,7 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
-    big_sphere.position.x = .8 + Math.cos(0.5 * elapsedTime)/10*Math.PI
+    big_sphere.position.x = big_sphere_center + Math.cos(0.5 * elapsedTime)/10*Math.PI
     big_sphere.position.z = Math.sin(0.5 * elapsedTime)/7*Math.PI
 
     small_sphere.position.x = big_sphere.position.x + 1.2 * Math.cos(0.8 * elapsedTime)
@@ -174,11 +191,15 @@ const tick = () =>
         main_letters.forEach((letter, index) => {
             letter.position.x =  big_sphere.position.x + 0.54 * Math.cos(0.8 * elapsedTime - spacing * index)
             letter.position.z =  big_sphere.position.z + 0.54 * Math.sin(0.8 * elapsedTime - spacing * index)
+            letter.position.y =  big_sphere.position.y
+
             letter.rotation.y =  Math.PI/2 - 0.8 * elapsedTime + spacing * index
         })
         secondary_letters.forEach((letter, index) =>{
             letter.position.x =  small_sphere.position.x + 0.3 * Math.cos(1 * elapsedTime - 1.8 * spacing * index)
             letter.position.z =  small_sphere.position.z + 0.3 * Math.sin(1 * elapsedTime - 1.8 * spacing * index)
+            letter.position.y =  small_sphere.position.y
+
             letter.rotation.y =  Math.PI/2 - 1 * elapsedTime + 1.8 * spacing * index
         })
     }
